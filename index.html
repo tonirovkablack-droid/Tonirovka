@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск авто</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #17212b; color: white; padding: 20px; }
+        input { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: none; font-size: 16px; box-sizing: border-box; }
+        .item { background: #232e3c; padding: 15px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Поиск вашего авто</h2>
+    <input type="text" id="search" placeholder="Введите марку или модель..." onkeyup="search()">
+    <div id="results"></div>
+
+    <script>
+        let carBase = [];
+
+        // Загружаем базу из файла cars.json
+        fetch('cars.json')
+            .then(response => response.json())
+            .then(data => carBase = data);
+
+        function search() {
+            let input = document.getElementById('search').value.toLowerCase();
+            let resDiv = document.getElementById('results');
+            resDiv.innerHTML = "";
+            
+            if (input.length < 2) return;
+
+            let filtered = carBase.filter(c => c.toLowerCase().includes(input));
+            
+            filtered.slice(0, 10).forEach(car => {
+                let div = document.createElement('div');
+                div.className = 'item';
+                div.innerText = car;
+                div.onclick = () => window.Telegram.WebApp.sendData("Выбран авто: " + car);
+                resDiv.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
